@@ -6,7 +6,6 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-    bool export_to_tri_file = false;
     string input_path, output_path;
 
     // Declare the supported options.
@@ -14,8 +13,8 @@ int main(int argc, char** argv) {
     desc.add_options()
             ("help,h", "produce help message")
             ("input,i", po::value<string>(), "Input skp file")
-            ("output,o", po::value<string>(), "Output pcd file")
-            ("tri", "Export to a tri file instead of a pcd file")
+            ("output,o", po::value<string>(), "Output tri file")
+            //("tri", "Export to a tri file instead of a pcd file")
             ;
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -34,19 +33,12 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    if (vm.count("tri"))
-        export_to_tri_file = true;
-
     if (vm.count("output")) {
         output_path = vm["output"].as<string>();
     } else {
-        //default value is <file>.dist
+        //default value is <file>.tri
         int lastindex = input_path.find_last_of(".");
-        output_path = input_path.substr(0, lastindex);
-        if(export_to_tri_file)
-            output_path += ".tri";
-        else
-            output_path += ".pcd";
+        output_path = input_path.substr(0, lastindex) + ".tri";
     }
 
     SUInitialize();
