@@ -1,42 +1,30 @@
 #include "skp_parser.h"
-#include <boost/program_options.hpp> //used to parse command lne arguments
-namespace po = boost::program_options;
 
 using namespace std;
 
+void display_usage(int argc, char** argv) {
+    cout << "Usage is :" << endl;
+    cout << argv[0] << " <input-skp-file> [<output-tri-file>]" << endl;
+}
+
 int main(int argc, char** argv) {
 
-    string input_path, output_path;
-
-    // Declare the supported options.
-    po::options_description desc("Allowed options");
-    desc.add_options()
-            ("help,h", "produce help message")
-            ("input,i", po::value<string>(), "Input skp file")
-            ("output,o", po::value<string>(), "Output tri file")
-            //("tri", "Export to a tri file instead of a pcd file")
-            ;
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
-
-     if (vm.count("help")) {
-        cout << desc << endl;
+    if(argc < 2 || argc > 3) {
+        display_usage(argc,argv);
         return 1;
     }
 
-    if (vm.count("input")) {
-        input_path = vm["input"].as<string>();
-    } else {
-        cout << "Input file unknown or invalid." << endl;
-        cout << desc << endl;
-        return 1;
+    if( argv[1] == "-h" || argv[1] == "--help") {
+        display_usage(argc,argv);
+        return 0;
     }
 
-    if (vm.count("output")) {
-        output_path = vm["output"].as<string>();
-    } else {
-        //default value is <file>.tri
+    string input_path(argv[1]);
+    string output_path;
+
+    if(argc == 3) //output file has been provided
+        output_path = string(argv[2]);
+    else {
         int lastindex = input_path.find_last_of(".");
         output_path = input_path.substr(0, lastindex) + ".tri";
     }
